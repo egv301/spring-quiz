@@ -1,2 +1,2 @@
-# sweater
+# quiz
 Spring Boot learning
