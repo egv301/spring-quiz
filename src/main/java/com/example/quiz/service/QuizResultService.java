@@ -25,15 +25,16 @@ public class QuizResultService {
 	
 	public List<UserQuizResultDTO> getStatsBySubject(Long subject_id) throws NotFoundException{
 		Subject subject = subjectService.getSubject(subject_id);
-		List<UserQuizResultDTO> quizResult = quizResultRepository
-											.findBySubjectOrderByResultDesc(subject)
-											.stream()
-											.map(result->
-												new UserQuizResultDTO(
-														result.getUser().getId(),
-														result.getUser().getUsername(),
-														result.getResult()
-												)).collect(Collectors.toList());
+		List<UserQuizResultDTO> quizResult = 
+				quizResultRepository
+				.findBySubjectOrderByResultDesc(subject)
+				.stream()
+				.map(result->
+					new UserQuizResultDTO(
+							result.getUser().getId(),
+							result.getUser().getUsername(),
+							result.getResult()
+				)).collect(Collectors.toList());
 		return quizResult;
 	}
 	
