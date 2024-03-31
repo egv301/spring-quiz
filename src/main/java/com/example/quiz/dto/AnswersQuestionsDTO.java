@@ -38,6 +38,4 @@ public class AnswersQuestionsDTO {
     public void setAnswerList(List<AnswerDTO> answerList) {
         this.answerList = answerList;
     }
-
-    
 }

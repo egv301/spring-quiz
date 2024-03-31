@@ -44,6 +44,4 @@ public class QuizDTO {
 		return "QuizDTO [subjectId=" + subjectId + ", subjectTitle=" + subjectTitle + ", questionAnswers="
 				+ questionAnswers + "]";
 	}
-	
-	
 }

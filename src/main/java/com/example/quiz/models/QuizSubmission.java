@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 public class QuizSubmission{
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
@@ -46,6 +47,4 @@ public class QuizSubmission{
     public void setAnswer(Answer answer) {
         this.answer = answer;
     }
-
-    
 }

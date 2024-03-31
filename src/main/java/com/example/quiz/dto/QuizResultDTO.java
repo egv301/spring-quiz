@@ -1,6 +1,7 @@
 package com.example.quiz.dto;
 
 public class QuizResultDTO {
+	
 	private Long subjectId;
 	private String subjectTitle;
 	private int quizScore;
@@ -36,5 +37,4 @@ public class QuizResultDTO {
 	public void setQuizScore(int quizScore) {
 		this.quizScore = quizScore;
 	}
-	
 }

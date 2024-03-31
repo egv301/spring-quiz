@@ -14,14 +14,12 @@ import com.example.quiz.service.UserService;
 public class ProfileController {
 	@Autowired
 	UserService userService;
-	
+
 	@GetMapping("/profile")
-	public String profile(Principal authUser,Model model) {
+	public String profile(Principal authUser, Model model) {
 		User user = userService.findByUsername(authUser.getName());
-		model.addAttribute("user",user);
+		model.addAttribute("user", user);
 		System.out.println(user.getQuizResults());
 		return "profile/profile";
 	}
-	
-	
 }

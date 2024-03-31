@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import javax.validation.Valid;
 
-
 @Controller
 @RequestMapping("/admin")
 public class SubjectController {

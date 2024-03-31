@@ -1,6 +1,5 @@
 package com.example.quiz.dto;
 
-
 public class AnswerDTO {
 	private Long answerId;
 	private String answerTitle;
@@ -34,8 +33,6 @@ public class AnswerDTO {
 		this.answerTitle = answerTitle;
 	}
 
-	
-
 	public boolean isCorrect() {
 		return correct;
 	}
@@ -48,6 +45,4 @@ public class AnswerDTO {
 	public String toString() {
 		return "AnswerDTO [answerId=" + answerId + ", answerTitle=" + answerTitle + ", correct=" + correct + "]";
 	}
-	
-	
 }

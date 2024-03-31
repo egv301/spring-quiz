@@ -44,6 +44,4 @@ public class QuestionAnswersDTO {
 		return "QuestionAnswersDTO [questionId=" + questionId + ", questionTitle=" + questionTitle + ", answers="
 				+ answers + "]";
 	}
-	
-	
 }

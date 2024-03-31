@@ -3,6 +3,7 @@ package com.example.quiz.dto;
 import javax.validation.constraints.NotNull;
 
 public class QuizAnswerDTO {
+	
 	@NotNull(message = "Subject cannot be null")
 	private Long subjectId;
 	@NotNull(message = "Subject cannot be null")
@@ -40,10 +41,4 @@ public class QuizAnswerDTO {
 	public String toString() {
 		return "QuizAnswerDTO [subjectId=" + subjectId + ", questionId=" + questionId + ", answerId=" + answerId + "]";
 	}
-	
-	
-	
-	
-	
-	
 }

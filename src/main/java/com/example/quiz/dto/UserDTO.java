@@ -40,6 +40,4 @@ public class UserDTO{
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
     }
-
-    
 }

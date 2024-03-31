@@ -3,8 +3,8 @@ package com.example.quiz.dto;
 import javax.validation.constraints.NotBlank;
 
 public class SubjectDTO {
+	
 	private Long id;
-
 	@NotBlank(message="Title should not be empty")
 	private String title;
 	private boolean isActive;

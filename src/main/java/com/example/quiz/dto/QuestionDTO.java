@@ -58,5 +58,4 @@ public class QuestionDTO {
     public void setSubject(Long subject) {
         this.subject = subject;
     }
-
 }

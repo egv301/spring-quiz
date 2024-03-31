@@ -44,9 +44,4 @@ public class AnswerWithStatusDTO {
 		return "AnswerWithStatusDTO [answerId=" + answerId + ", answerTitle=" + answerTitle + ", answerStatus="
 				+ answerStatus + "]";
 	}
-    
-    
-	
-	
-	
 }

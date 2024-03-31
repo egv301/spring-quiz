@@ -39,6 +39,7 @@ public class QuizResultService {
 							result.getUser().getUsername(),
 							result.getResult()
 				)).collect(Collectors.toList());
+		
 		return quizResult;
 	}
 	
@@ -57,6 +58,7 @@ public class QuizResultService {
 							result.getSubject().getTitle(),
 							result.getResult()
 					)).collect(Collectors.toList());
+		
 		return quizResult;
 	}
 

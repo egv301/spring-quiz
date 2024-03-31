@@ -1,6 +1,8 @@
 package com.example.quiz.dto;
 import java.util.List;
+
 public class QuestionAnswersResultsDTO {
+	
 	private Long questionId;
     private String questionTitle;
     private List<AnswerWithStatusDTO> answers;

@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 public class Question {
+	
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id")
@@ -52,8 +53,6 @@ public class Question {
 		this.title = title;
 	}
 	
-	
-
 	public Subject getSubject() {
 		return subject;
 	}
@@ -102,8 +101,4 @@ public class Question {
 			return false;
 		return true;
 	}
-
-	
-
-	
 }

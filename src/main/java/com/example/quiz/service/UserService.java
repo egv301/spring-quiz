@@ -77,8 +77,6 @@ public class UserService implements UserDetailsService {
         user.setRoles(Arrays.asList(role));
         user.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         userRepository.save(user);
-        
-        
         return true;
     }
 
@@ -97,6 +95,5 @@ public class UserService implements UserDetailsService {
                .anyMatch(role -> "ROLE_ADMIN".equals(role.getName()));
         }
         return false;
-        
     }
 }

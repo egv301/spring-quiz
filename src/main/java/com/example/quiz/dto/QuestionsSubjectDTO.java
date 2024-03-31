@@ -3,6 +3,7 @@ package com.example.quiz.dto;
 import java.util.List;
 
 public class QuestionsSubjectDTO {
+	
 	private Long subjectId;
 	private String subjectTitle;
 	private List<QuestionDTO> questionList;

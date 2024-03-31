@@ -26,8 +26,4 @@ public interface AnswerRepo extends JpaRepository<Answer, Long> {
 	
 	@Query("select a from Answer a where a.question.subject = :subject AND a.correct=true")
 	List<Answer> getCorrectAnswersBySubject(@Param("subject") Subject subject);
-	
-	
-	
-    
 }
