@@ -18,6 +18,15 @@
             <#list answersDetails.answerList as answer>
             	<tr>
                 	<td>${answer.answerTitle}</td>
+                    <td>
+                    <#if answer.correct>
+                        <span style="background:green;color:white;";>correct</span>
+                    <#else>
+                        <form method="POST" action="/admin/set-correct-answer/${answer.answerId}">
+                			<input type="submit" value="make correct">
+                		</form>
+                    </#if>
+                    </td>
                 	<td><a href="/admin/edit-answer/${answer.answerId}">Edit</a></td>
                 	<td>
                 		<form method="POST" action="/admin/remove-answer/${answer.answerId}">

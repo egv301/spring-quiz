@@ -1,4 +1,4 @@
-package com.example.quiz.domain;
+package com.example.quiz.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

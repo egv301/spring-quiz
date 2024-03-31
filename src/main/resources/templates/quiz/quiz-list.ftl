@@ -22,7 +22,7 @@
 					<#elseif loggedIn && subject.canPass>
 						<a class="start-link" href="/quiz-start/${subject.subjectId}">Start quiz</a>
 					<#elseif loggedIn && !subject.canPass>
-						<a class="start-link" href="/quiz-start/${subject.subjectId}">Quiz completed</a>
+						<div style="padding:10px;background:lightgray;">Quiz already passed</div>
 					</#if>
 				</div>
 	        </div>

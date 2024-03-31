@@ -16,7 +16,7 @@
                 	<td><a href="/admin/show-subject/${subject.id}">Show questions</a></td>
                 	<td><a href="/admin/edit-subject/${subject.id}">Edit</a></td>
                 	<td>
-                		<form method="POST" action="/admin/remove-answer/${subject.id}">
+                		<form method="POST" action="/admin/remove-subject/${subject.id}">
                 			<input type="submit" value="remove">
                 		</form>
                 	</td>

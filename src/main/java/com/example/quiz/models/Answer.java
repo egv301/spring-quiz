@@ -1,5 +1,6 @@
-package com.example.quiz.domain;
+package com.example.quiz.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,27 +12,31 @@ import javax.validation.constraints.NotBlank;
 public class Answer {
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
     private Long id;
 	
+	@Column(name="title")
 	@NotBlank(message="Answer title should not be empty.")
-    private String title;
-    private boolean isCorrect;
+	private String title;
+	
+	@Column(name="correct")
+    private boolean correct;
+    
+    @ManyToOne
+    private Question question;
     
     public Answer() {}
 
-	public Answer(String title, boolean isCorrect,Question question) {
+	public Answer(String title, boolean correct,Question question) {
 		this.title = title;
-		this.isCorrect = isCorrect;
+		this.correct = correct;
 		this.question = question;
 	}
-
-	public Answer(String title, boolean isCorrect) {
-		this.title = title;
-		this.isCorrect = isCorrect;
-	}
 	
-	@ManyToOne
-    private Question question;
+	public Answer(String title,Question question) {
+		this.title = title;
+		this.question = question;
+	}
 
 	public Long getId() {
 		return id;
@@ -49,12 +54,12 @@ public class Answer {
 		this.title = title;
 	}
 
-	public boolean getIsCorrect() {
-		return isCorrect;
+	public boolean getCorrect() {
+		return correct;
 	}
 
-	public void setIsCorrect(boolean isCorrect) {
-		this.isCorrect = isCorrect;
+	public void setCorrect(boolean correct) {
+		this.correct = correct;
 	}
 
 	public Question getQuestion() {
@@ -65,14 +70,12 @@ public class Answer {
 		this.question = question;
 	}
 
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + (isCorrect ? 1231 : 1237);
-		result = prime * result + ((question == null) ? 0 : question.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
 	}
 
@@ -90,23 +93,11 @@ public class Answer {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (isCorrect != other.isCorrect)
-			return false;
-		if (question == null) {
-			if (other.question != null)
-				return false;
-		} else if (!question.equals(other.question))
-			return false;
-		if (title == null) {
-			if (other.title != null)
-				return false;
-		} else if (!title.equals(other.title))
-			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Answer [id=" + id + ", title=" + title + ", isCorrect=" + isCorrect + "]";
+		return "Answer [id=" + id + ", title=" + title + ", correct=" + correct + "]";
 	}
 }

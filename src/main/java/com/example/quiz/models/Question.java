@@ -1,4 +1,4 @@
-package com.example.quiz.domain;
+package com.example.quiz.models;
 
 import java.util.List;
 
@@ -83,8 +83,6 @@ public class Question {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
 	}
 
@@ -102,18 +100,10 @@ public class Question {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (subject == null) {
-			if (other.subject != null)
-				return false;
-		} else if (!subject.equals(other.subject))
-			return false;
-		if (title == null) {
-			if (other.title != null)
-				return false;
-		} else if (!title.equals(other.title))
-			return false;
 		return true;
 	}
+
+	
 
 	
 }

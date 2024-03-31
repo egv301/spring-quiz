@@ -2,26 +2,24 @@ package com.example.quiz.service;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
-import com.example.quiz.domain.Answer;
-import com.example.quiz.domain.Question;
-import com.example.quiz.domain.QuizResult;
-import com.example.quiz.domain.Subject;
-import com.example.quiz.domain.User;
-import com.example.quiz.domain.UserAnswer;
 import com.example.quiz.dto.AnswerDTO;
 import com.example.quiz.dto.AnswerWithStatusDTO;
 import com.example.quiz.dto.QuestionAnswersDTO;
 import com.example.quiz.dto.QuestionAnswersResultsDTO;
+import com.example.quiz.dto.QuizAnswerDTO;
 import com.example.quiz.dto.QuizDTO;
 import com.example.quiz.dto.QuizDetailedResulstDTO;
 import com.example.quiz.dto.QuizResultDTO;
@@ -30,15 +28,23 @@ import com.example.quiz.dto.SubjectListDTO;
 import com.example.quiz.enums.AnswerStatus;
 import com.example.quiz.exceptions.NotFoundException;
 import com.example.quiz.exceptions.QuizAlreadyPassedException;
+import com.example.quiz.models.Answer;
+import com.example.quiz.models.Question;
+import com.example.quiz.models.QuizResult;
+import com.example.quiz.models.Subject;
+import com.example.quiz.models.User;
+import com.example.quiz.models.UserAnswer;
 import com.example.quiz.repos.QuizResultRepository;
 import com.example.quiz.repos.SubjectRepo;
+
+import javassist.expr.NewArray;
 
 @Service
 public class QuizService {
 	@Autowired
 	SubjectRepo subjectRepo;
 	@Autowired
-    QuizResultRepository quizResultRepo;
+    QuizResultService quizResultService;
 	@Autowired
     UserService userService;
 	@Autowired
@@ -50,63 +56,21 @@ public class QuizService {
 	@Autowired
 	UserAnswerService userAnswerService;
 	
-	
-	
-	public QuizResultDTO processResults(Principal authUser,Long subject_id,MultiValueMap<String, String> answers) throws NotFoundException {
-		int score=0;
+	public QuizResultDTO processResults(Principal authUser,Long subjectId) throws NotFoundException {
+		int score = 0;
 		User user = userService.findByUsername(authUser.getName());
-		Subject subject = subjectService.getSubject(subject_id);
-		Map<Long, Integer> questionsPoints = new HashMap<Long, Integer>();
-		Map<Long, List<Long>> questionsCorrectAnswers = new HashMap<Long, List<Long>>();
+		Subject subject = subjectService.getSubject(subjectId);
 		
-		for(Question question : subject.getQuestions()) {
-			questionsPoints.put(question.getId(), question.getPoints());
-			List<Long> correctAnswerIds = new ArrayList<Long>();
-			for(Answer answer : question.getAnswers()) {
-				if(answer.getIsCorrect()==true) {
-					correctAnswerIds.add(answer.getId());
-				}
-			}
-			questionsCorrectAnswers.put(question.getId(), correctAnswerIds);
-		}
-		
-		for (Entry<String, List<String>>  entry : answers.entrySet()) {
-			Long questionId = (long) Integer.parseInt(entry.getKey());
-			List<Long> answerIds = new ArrayList<>();
-			for(String s : entry.getValue()) {
-				answerIds.add((long) Integer.parseInt(s));
-			}
-			
-			if(questionsCorrectAnswers.containsKey(questionId)) {
-				if(answerIds.size() == questionsCorrectAnswers.get(questionId).size() && answerIds.containsAll(questionsCorrectAnswers.get(questionId))) {
-	        		score += questionsPoints.get(questionId);
-	        	}
-	        }
-		}
-		quizResultRepo.save(new QuizResult(user,subject,score));
-		saveResults(subject,user,answers);
-		return new QuizResultDTO(subject.getId(), subject.getTitle(), score);
-	}
-	
-	public void saveResults(Subject subject, User user, MultiValueMap<String, String> answers) throws NotFoundException {
-		List<UserAnswer> userAswers = new ArrayList<>();
-		List<Long> answerIds = answerService.getAnswerIds(subject.getQuestions());
-		
-		for (Entry<String, List<String>>  entry : answers.entrySet()) {
-			Long questionId = (long) Integer.parseInt(entry.getKey());
-			Question question = questionService.getQuestion(questionId);
-			List<Long> answersIds = new ArrayList<>();
-			for(String s : entry.getValue()) {
-				if(answerIds.contains((long) Integer.parseInt(s))) {
-					userAswers.add(new UserAnswer(
-							user,
-							subject,
-							question, 
-							answerService.getAnswer((long) Integer.parseInt(s))));
-				}
+		List<Answer> answerList = answerService.getCorrectAnswersBySubject(subject);
+		List<UserAnswer> userAnswers = userAnswerService.getUserAnswers(user, subject);
+		System.out.println(userAnswers);
+		for(UserAnswer userAnswerItem : userAnswers) {
+			if(answerList.contains(userAnswerItem.getAnswer())) {
+				score += userAnswerItem.getQuestion().getPoints();
 			}
 		}
-		userAnswerService.saveAll(userAswers);
+		quizResultService.saveResults(user, subject, score);
+		return new QuizResultDTO(subject.getId(),subject.getTitle(),score);
 	}
 	
 	public List<SubjectListDTO> getSubjectList(Principal auth){
@@ -116,7 +80,7 @@ public class QuizService {
 		List<Subject> subjectList = subjectService.subjectList();
 		if(auth!=null) {
 			user = userService.findByUsername(auth.getName());
-			subjectIds = quizResultRepo.getSubjectIDS(user);
+			subjectIds = quizResultService.getSubjectIDS(user);
 		}
 		for(Subject subject : subjectList) {
 			boolean canPass = subjectIds.contains(subject.getId()) ? false : true;
@@ -126,60 +90,66 @@ public class QuizService {
 			
 	}
 	
-	public boolean checkQuizPassed(Principal auth,Long subjectId) throws NotFoundException, QuizAlreadyPassedException {
+	public void checkQuizPassed(Principal auth,Long subjectId) throws NotFoundException, QuizAlreadyPassedException {
 		User user = userService.findByUsername(auth.getName());
 		Subject subject = subjectService.getSubject(subjectId);
-		if(quizResultRepo.existsByUserAndSubject(user, subject)){
-			return true;
+		if(quizResultService.existsByUserAndSubject(user, subject)){
+			throw new QuizAlreadyPassedException("Quiz already passed");
 		}
-		return false;
 	}
 
-	public QuizDetailedResulstDTO showUserAnswers(Long subject_id, Principal authUser) throws NotFoundException {
-		Subject subject = subjectService.getSubject(subject_id);
+	public QuizDetailedResulstDTO showDetailedUserAnswers(Principal authUser,Long subjectId) throws NotFoundException {
+		Subject subject = subjectService.getSubject(subjectId);
 		User user = userService.findByUsername(authUser.getName());
-		Map<Long, List<Long>> userAnswersMap = new HashMap<>();
-		List<UserAnswer> userAnswersList = userAnswerService.getUserAnswers(user,subject);
-		//List<UserAnswer> userAnswersList = userAnswerService.findAll();
-		for(UserAnswer userAnswer : userAnswersList) {
-			if(userAnswersMap.containsKey(userAnswer.getQuestion().getId())) {
-				List<Long> ansList = userAnswersMap.get(userAnswer.getQuestion().getId());
-				ansList.add(userAnswer.getAnswer().getId());
-				userAnswersMap.put(userAnswer.getQuestion().getId(), ansList);
-			}else {
-				List<Long> ansList = new ArrayList<>();
-				ansList.add(userAnswer.getAnswer().getId());
-				userAnswersMap.put(userAnswer.getQuestion().getId(), ansList);
-			}
-		} 
-		//System.out.println(userAnswersMap);
 		
-		List<QuestionAnswersResultsDTO> questionAnswerList = new ArrayList<>();
-		for(Question questionItem : subject.getQuestions()) {
-			List<AnswerWithStatusDTO> answerList = new ArrayList<>();
-			
-			for(Answer answerItem : questionItem.getAnswers()) {
-				if(answerItem.getIsCorrect()) {
-					answerList.add(new AnswerWithStatusDTO(answerItem.getId(),answerItem.getTitle(),AnswerStatus.CORRECT));
-				} else if(userAnswersMap.containsKey(questionItem.getId()) 
-						&& userAnswersMap.get(questionItem.getId()).contains(answerItem.getId())){
-						answerList.add(new AnswerWithStatusDTO(answerItem.getId(),answerItem.getTitle(),AnswerStatus.INCORRECT));
-				} else {
-					answerList.add(new AnswerWithStatusDTO(answerItem.getId(),answerItem.getTitle(),AnswerStatus.NOTCHOSEN));
-				}
+		List<Answer> answerList = answerService.getAnswersBySubject(subject);
+		List<Long> userAnswerIdsList = userAnswerService.getUserAnswersIds(user, subject);
+		
+		List<QuestionAnswersResultsDTO> questionAnswersResultsListDTO = new ArrayList<>();
+		List<AnswerWithStatusDTO> answerWithStatusListDTO = new ArrayList<>();
+		Map<Long, QuestionAnswersResultsDTO> questionAnswersMap = new HashMap<Long, QuestionAnswersResultsDTO>();
+		
+		for(Answer answer : answerList) {
+			AnswerWithStatusDTO answerWithStatusDTO = new AnswerWithStatusDTO();
+			answerWithStatusDTO.setAnswerId(answer.getId());
+			answerWithStatusDTO.setAnswerTitle(answer.getTitle());
+			if(answer.getCorrect()) {
+				answerWithStatusDTO.setAnswerStatus(AnswerStatus.CORRECT);
+			} else if(userAnswerIdsList.contains(answer.getId())) {
+				answerWithStatusDTO.setAnswerStatus(AnswerStatus.INCORRECT);
+			} else {
+				answerWithStatusDTO.setAnswerStatus(AnswerStatus.NOTCHOSEN);
 			}
-			questionAnswerList.add(new QuestionAnswersResultsDTO(questionItem.getId(),questionItem.getTitle(),answerList));
+			
+			if(questionAnswersMap.containsKey(answer.getQuestion().getId())) {
+				questionAnswersMap.get(answer.getQuestion().getId()).getAnswers().add(answerWithStatusDTO);
+			} 
+			else {
+				List<AnswerWithStatusDTO> answerWithStatusDto = new ArrayList<>();
+				answerWithStatusDto.add(answerWithStatusDTO);
+				questionAnswersMap.put(answer.getQuestion().getId(),
+						new QuestionAnswersResultsDTO(
+								answer.getQuestion().getId(),
+								answer.getQuestion().getTitle(),
+								answerWithStatusDto)
+				);
+			}
 		}
-		return new QuizDetailedResulstDTO(subject.getId(),subject.getTitle(),questionAnswerList);
+		return new QuizDetailedResulstDTO(
+				subject.getId(),
+				subject.getTitle(),
+				questionAnswersMap.values().stream().collect(Collectors.toList())
+		);
 		
 	}
 	
-    private SubjectDTO mapToSubjectDTO(Subject subject) {
+	private SubjectDTO mapToSubjectDTO(Subject subject) {
         return new SubjectDTO(subject.getId(), subject.getTitle());
     }
     
     public QuizDTO getQuizDetails(Principal user,Long subjectId) throws NotFoundException, QuizAlreadyPassedException {
 		Subject subject = subjectService.getSubject(subjectId);
+		checkQuizPassed(user,subjectId);
         List<QuestionAnswersDTO> questions = subject.getQuestions().stream()
                 .map(this::mapToQuestionDTO)
                 .collect(Collectors.toList());
@@ -195,9 +165,16 @@ public class QuizService {
     }
 
     private AnswerDTO mapToAnswerDTO(Answer answer) {
-        return new AnswerDTO(answer.getId(), answer.getTitle(), answer.getIsCorrect());
+        return new AnswerDTO(answer.getId(), answer.getTitle(), answer.getCorrect());
     }
-	
 
-	
+	public void addQuizAsnwer(Principal auth,QuizAnswerDTO quizAnswerDto) throws NotFoundException {
+		User user = userService.findByUsername(auth.getName());
+		Subject subject = subjectService.getSubject(quizAnswerDto.getSubjectId());
+		Question question = questionService.getQuestion(quizAnswerDto.getQuestionId());
+		Answer answer = answerService.getAnswer(quizAnswerDto.getAnswerId());
+		if(subject.getQuestions().contains(question) && question.getAnswers().contains(answer)) {
+			userAnswerService.addQuizAnswer(user, subject, question, answer);
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package com.example.quiz.domain;
+package com.example.quiz.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +40,12 @@ public class UserAnswer {
 		this.subject = subject;
 		this.question = question;
 		this.answer = answer;
+	}
+    
+    public UserAnswer(User user, Subject subject, Question question) {
+		this.user = user;
+		this.subject = subject;
+		this.question = question;
 	}
 
 	public Long getId() {

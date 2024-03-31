@@ -10,8 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import com.example.quiz.domain.User;
+
 import com.example.quiz.dto.RegistrationDTO;
+import com.example.quiz.models.User;
 import com.example.quiz.service.UserService;
 import com.example.quiz.util.ControllerUtils;
 

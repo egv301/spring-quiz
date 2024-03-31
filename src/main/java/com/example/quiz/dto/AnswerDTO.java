@@ -4,14 +4,18 @@ package com.example.quiz.dto;
 public class AnswerDTO {
 	private Long answerId;
 	private String answerTitle;
-    private boolean isCorrect;
+    private boolean correct;
     
     public AnswerDTO() {}
 
-	public AnswerDTO(Long answerId, String answerTitle, boolean isCorrect) {
+	public AnswerDTO(Long answerId, String answerTitle, boolean correct) {
 		this.answerId = answerId;
 		this.answerTitle = answerTitle;
-		this.isCorrect = isCorrect;
+		this.correct = correct;
+	}
+	
+	public AnswerDTO(String answerTitle) {
+		this.answerTitle = answerTitle;
 	}
 
 	public Long getAnswerId() {
@@ -30,17 +34,19 @@ public class AnswerDTO {
 		this.answerTitle = answerTitle;
 	}
 
+	
+
 	public boolean isCorrect() {
-		return isCorrect;
+		return correct;
 	}
 
-	public void setCorrect(boolean isCorrect) {
-		this.isCorrect = isCorrect;
+	public void setCorrect(boolean correct) {
+		this.correct = correct;
 	}
 
 	@Override
 	public String toString() {
-		return "AnswerDTO [answerId=" + answerId + ", answerTitle=" + answerTitle + ", isCorrect=" + isCorrect + "]";
+		return "AnswerDTO [answerId=" + answerId + ", answerTitle=" + answerTitle + ", correct=" + correct + "]";
 	}
 	
 	

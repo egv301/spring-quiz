@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.example.quiz.domain.User;
+import com.example.quiz.models.User;
 import com.example.quiz.service.UserService;
 
 @Controller

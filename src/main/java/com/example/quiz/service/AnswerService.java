@@ -2,15 +2,18 @@ package com.example.quiz.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.example.quiz.domain.Answer;
-import com.example.quiz.domain.Question;
-import com.example.quiz.domain.Subject;
 import com.example.quiz.dto.AnswerDTO;
 import com.example.quiz.dto.AnswersQuestionsDTO;
 import com.example.quiz.exceptions.NotFoundException;
+import com.example.quiz.models.Answer;
+import com.example.quiz.models.Question;
+import com.example.quiz.models.Subject;
 import com.example.quiz.repos.AnswerRepo;
 
 @Service
@@ -30,7 +33,7 @@ public class AnswerService {
 		return new AnswerDTO(
 			answer.getId(),
 			answer.getTitle(),
-			answer.getIsCorrect()
+			answer.getCorrect()
 		);
 	}
 
@@ -39,7 +42,7 @@ public class AnswerService {
 		return question.getAnswers()
 			.stream()
 			.map(answer->
-				new AnswerDTO(answer.getId(),answer.getTitle(),answer.getIsCorrect()))
+				new AnswerDTO(answer.getId(),answer.getTitle(),answer.getCorrect()))
 			.collect(Collectors.toList());
 	}
 
@@ -51,7 +54,7 @@ public class AnswerService {
 				new AnswerDTO(
 					answer.getId(),
 					answer.getTitle(),
-					answer.getIsCorrect()))
+					answer.getCorrect()))
 			.collect(Collectors.toList());
 		return new AnswersQuestionsDTO(
 			question.getId(),
@@ -68,19 +71,42 @@ public class AnswerService {
 		Question question = questionService.getQuestion(question_id);
 		answerRepo.save(new Answer(
 			answerDTO.getAnswerTitle(),
-			answerDTO.isCorrect(),
 			question
 		));
 	}
+	
+//	public boolean checkAnswerQuestionSubject(Long answerId, Long questionId, Long subjectId) {
+//		return answerRepo.checkAnswerQuestionSubject(answerId, questionId, subjectId);
+//	}
 
 	public void updateAnswer(Long answer_id, AnswerDTO answerDTO) throws NotFoundException {
 		Answer answer = answerRepo.findById(answer_id).orElseThrow(()->new NotFoundException("Answer not found"));
 		answer.setTitle(answerDTO.getAnswerTitle());
-		answer.setIsCorrect(answerDTO.isCorrect());
 		answerRepo.save(answer);
 	}
 
 	public void removeAnswer(Long answer_id) {
 		answerRepo.deleteById(answer_id);
 	}
+
+	public void setCorrectAnswer(Long answer_id) throws NotFoundException {
+		Answer answer = getAnswer(answer_id);
+		answer.setCorrect(true);
+		answerRepo.save(answer);
+		setOtherAnwersToExcept(answer_id);
+	}
+	
+	public void setOtherAnwersToExcept(Long answerId) {
+		answerRepo.setOtherAnwersToExcept(answerId);
+	}
+
+	public List<Answer> getCorrectAnswersBySubject(Subject subject) {
+		return answerRepo.getCorrectAnswersBySubject(subject);
+	}
+	
+	public List<Answer> getAnswersBySubject(Subject subject) {
+		return answerRepo.getAnswersBySubject(subject);
+	}
+	
+
 }

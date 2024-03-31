@@ -38,6 +38,12 @@ public class AnswerWithStatusDTO {
 	public void setAnswerStatus(AnswerStatus answerStatus) {
 		this.answerStatus = answerStatus;
 	}
+
+	@Override
+	public String toString() {
+		return "AnswerWithStatusDTO [answerId=" + answerId + ", answerTitle=" + answerTitle + ", answerStatus="
+				+ answerStatus + "]";
+	}
     
     
 	
