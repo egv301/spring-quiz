@@ -5,12 +5,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.quiz.domain.QuizResult;
-import com.example.quiz.domain.Subject;
-import com.example.quiz.domain.User;
 import com.example.quiz.dto.QuizResultDTO;
 import com.example.quiz.dto.UserQuizResultDTO;
 import com.example.quiz.exceptions.NotFoundException;
+import com.example.quiz.models.QuizResult;
+import com.example.quiz.models.Subject;
+import com.example.quiz.models.User;
 import com.example.quiz.projections.IQuizCount;
 import com.example.quiz.repos.QuizResultRepository;
 
@@ -22,6 +22,10 @@ public class QuizResultService {
 	SubjectService subjectService;
 	@Autowired
 	UserService userService;
+	
+	public void saveResults(User user, Subject subject, int result) {
+		quizResultRepository.save(new QuizResult(user, subject, result));
+	}
 	
 	public List<UserQuizResultDTO> getStatsBySubject(Long subject_id) throws NotFoundException{
 		Subject subject = subjectService.getSubject(subject_id);
@@ -54,5 +58,14 @@ public class QuizResultService {
 							result.getResult()
 					)).collect(Collectors.toList());
 		return quizResult;
+	}
+
+	
+	public List<Long> getSubjectIDS(User user) {
+		return quizResultRepository.getSubjectIDS(user);
+	}
+
+	public boolean existsByUserAndSubject(User user, Subject subject) {
+		return quizResultRepository.existsByUserAndSubject(user,subject);
 	}
 }

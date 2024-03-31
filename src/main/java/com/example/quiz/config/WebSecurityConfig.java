@@ -21,10 +21,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+    	String[] resources = new String[]{
+                "/",
+                    "/home",
+                    "/css/**",
+                    "/icons/**",
+                    "/images/**",
+                    "/resources/**",
+                    "/static/**",
+                    "/js/**"
+            };
         httpSecurity
                 .csrf()
                     .disable()
                     .authorizeRequests()
+                    .antMatchers(resources).permitAll()
                     .antMatchers("/", "/quiz-list").permitAll()
                     .antMatchers("/registration").not().fullyAuthenticated()
                     .antMatchers("/admin/**").hasRole("ADMIN")

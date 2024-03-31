@@ -1,6 +1,8 @@
 package com.example.quiz.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -9,18 +11,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.quiz.domain.*;
+import com.example.quiz.dto.QuizAnswerDTO;
 import com.example.quiz.exceptions.NotFoundException;
 import com.example.quiz.exceptions.QuizAlreadyPassedException;
+import com.example.quiz.models.*;
 import com.example.quiz.service.AnswerService;
 import com.example.quiz.service.QuizResultService;
 import com.example.quiz.service.QuizService;
 import com.example.quiz.service.SubjectService;
 import com.example.quiz.service.UserService;
+import com.sun.mail.iap.Response;
 
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.List;;
+import java.util.List;
+
+import javax.validation.Valid;;
 
 @Controller
 public class QuizController {
@@ -48,16 +54,23 @@ public class QuizController {
 		return "quiz/quiz";
 	}
 	
-	@PostMapping("/submit-quiz/{subject_id}")
-	public String submitQuiz(@PathVariable("subject_id") Long subject_id, @RequestParam MultiValueMap<String, String> answers,Principal authUser,Model model) throws NotFoundException {
-		model.addAttribute("quizResult",quizService.processResults(authUser,subject_id,answers));
+	@GetMapping("/show-results/{subject_id}")
+	public String submitQuiz(@PathVariable("subject_id") Long subject_id,Principal authUser,Model model) throws NotFoundException {
+		model.addAttribute("quizResult",quizService.processResults(authUser,subject_id));
 		return "quiz/result";
 	}
 	
+	@PostMapping("/submit-quiz-answer")
+	public ResponseEntity<String> addQuizAnswer(@Valid QuizAnswerDTO quizAnswerDto,Principal auth) throws NotFoundException {
+		quizService.addQuizAsnwer(auth,quizAnswerDto);
+		return ResponseEntity.ok("OK");
+	}
+	
 	@GetMapping("/show-quiz-answers/{subject_id}")
-	public String showQuizAnswers(@PathVariable("subject_id") Long subject_id, Principal authUser,Model model) throws NotFoundException {
-		model.addAttribute("quizDetail",quizService.showUserAnswers(subject_id, authUser));
+	public String showQuizAnswers(@PathVariable("subject_id") Long subjectId, Principal authUser,Model model) throws NotFoundException {
+		model.addAttribute("quizDetail",quizService.showDetailedUserAnswers(authUser,subjectId));
 		//quizService.showUserAnswers(subject_id, authUser);
+//		quizService.showDetailedUserAnswers(authUser,subjectId);
 		return "quiz/quiz-results-detail";
 	}
 }

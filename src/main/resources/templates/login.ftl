@@ -8,5 +8,5 @@
 	<div><input type="password" name="password" placeholder="Password"></div>
 	<input type="submit" value="Login"/>
 </form>
-<div style="margin-top:30px;"><a href="/registration">Register</a>
+<div style="margin-top:30px;"><a href="/registration">Register</a></div>
 </@c.page>

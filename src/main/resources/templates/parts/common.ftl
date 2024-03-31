@@ -4,52 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <title>${pageTitle}</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/script.js"></script>
     <style>
-    	body{
-    		font-family:Arial;
-    	}
-    	.container {
-    		width:80%;
-    		margin:0 auto;
-    		background:lightblue;
-    		padding:20px;
-    	}
-    	
-    	.result-header {
-    		display:flex;
-    		justify-content:space-between;
-    		font-weight:bold;
-    		margin:25px 0px;
-    	}
-    	.quiz-item {
-    		display:flex;
-    		justify-content:space-between;
-    		padding:20px;
-    		border:2px solid blue;
-    	}
-    	.quiz-subject{
-    		margin-bottom:20px;
-    	}
-    	.subject-title{
-    		margin-bottom:20px;
-    	}
-    	
-    	.start-link{
-    		padding:10px;
-    		background:red;
-    		text-decoration:none;
-    		color:white;
-    		font-weight:bold; 	
-    	}
-    	
-    	.quiz-score{
-    		color:red;
-    		font-weight:bold;
-    	}
-    	
-    	a {
-    		text-decoration:none;
-    	}
+        body{
+        font-family:Arial;
+        }
+        .container {
+            width:80%;
+            margin:0 auto;
+            background:lightblue;
+            padding:20px;
+        }
+
+        .result-header {
+            display:flex;
+            justify-content:space-between;
+            font-weight:bold;
+            margin:25px 0px;
+        }
+        .quiz-item {
+            display:flex;
+            justify-content:space-between;
+            padding:20px;
+            border:2px solid blue;
+        }
+        .quiz-subject{
+            margin-bottom:20px;
+        }
+        .subject-title{
+            margin-bottom:20px;
+        }
+
+        .start-link{
+            padding:10px;
+            background:red;
+            text-decoration:none;
+            color:white;
+            font-weight:bold; 	
+        }
+
+        .quiz-score{
+            color:red;
+            font-weight:bold;
+        }
+
+        a {
+            text-decoration:none;
+        }
     </style>
 </head>
 <body>	

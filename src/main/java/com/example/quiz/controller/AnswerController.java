@@ -1,10 +1,10 @@
 package com.example.quiz.controller;
 
-import com.example.quiz.domain.Answer;
-import com.example.quiz.domain.Question;
-import com.example.quiz.domain.Subject;
 import com.example.quiz.dto.AnswerDTO;
 import com.example.quiz.exceptions.NotFoundException;
+import com.example.quiz.models.Answer;
+import com.example.quiz.models.Question;
+import com.example.quiz.models.Subject;
 import com.example.quiz.service.AnswerService;
 import com.example.quiz.util.ControllerUtils;
 
@@ -46,6 +46,7 @@ public class AnswerController {
 			model.mergeAttributes(errorsMap);
 			return "answer/add-answer";
     	}
+    	System.out.println(answerDTO);
     	answerService.addAnswer(question_id, answerDTO);
     	return "redirect:/admin/answer-list/" + question_id;
     }
@@ -68,6 +69,12 @@ public class AnswerController {
     	return "redirect:/admin/answer-list/"+ answerService.getAnswer(answer_id).getQuestion().getId();
 	}
     
+	@PostMapping("/set-correct-answer/{answer_id}")
+	public String setCorrectAnswer(@PathVariable("answer_id") Long answer_id) throws NotFoundException{
+		answerService.setCorrectAnswer(answer_id);
+		return "redirect:/admin/answer-list/"+ answerService.getAnswer(answer_id).getQuestion().getId();
+	}
+
     @GetMapping("/show-answer/{id}")
     public String showAnswer(@PathVariable("id") Long answer_id,Model model) throws NotFoundException{
     	model.addAttribute("answer",answerService.getAnswer(answer_id));

@@ -14,9 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.quiz.domain.Role;
-import com.example.quiz.domain.User;
 import com.example.quiz.dto.RegistrationDTO;
+import com.example.quiz.models.Role;
+import com.example.quiz.models.User;
 import com.example.quiz.repos.RoleRepository;
 import com.example.quiz.repos.UserRepository;
 

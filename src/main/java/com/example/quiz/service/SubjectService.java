@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.quiz.domain.Question;
-import com.example.quiz.domain.Subject;
 import com.example.quiz.dto.QuestionDTO;
 import com.example.quiz.dto.SubjectDTO;
 import com.example.quiz.dto.SubjectWithQuestionsDTO;
 import com.example.quiz.exceptions.NotFoundException;
+import com.example.quiz.models.Question;
+import com.example.quiz.models.Subject;
 import com.example.quiz.repos.SubjectRepo;
 
 @Service

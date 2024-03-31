@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.example.quiz.domain.QuizResult;
-import com.example.quiz.domain.Subject;
-import com.example.quiz.domain.User;
 import com.example.quiz.dto.UserQuizResultDTO;
+import com.example.quiz.models.QuizResult;
+import com.example.quiz.models.Subject;
+import com.example.quiz.models.User;
 import com.example.quiz.projections.IQuizCount;
 
 
