@@ -1,6 +1,7 @@
 package com.example.quiz.dto;
 
 public class UserQuizResultDTO {
+	
 	private Long userId;
 	private String userName;
 	private int score;
@@ -41,6 +42,4 @@ public class UserQuizResultDTO {
 	public String toString() {
 		return "UserQuizResultDTO [userId=" + userId + ", userName=" + userName + ", score=" + score + "]";
 	}
-	
-	
 }

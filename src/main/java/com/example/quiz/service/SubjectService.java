@@ -65,9 +65,8 @@ public class SubjectService {
 												question.getTitle()))
 										.collect(Collectors.toList());
 		return new SubjectWithQuestionsDTO(subject.getId(),subject.getTitle(),questionList);
-		
-
 	}
+	
 	public void removeSubject(Long subject_id) {
 		subjectRepo.deleteById(subject_id);
 	}

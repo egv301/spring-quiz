@@ -45,6 +45,7 @@ public class QuestionService {
 					question.getTitle(),
 					question.getPoints()))
 			.collect(Collectors.toList());
+		
 		return new QuestionsSubjectDTO(
 			subject.getId(),
 			subject.getTitle(),

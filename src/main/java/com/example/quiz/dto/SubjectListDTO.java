@@ -1,6 +1,7 @@
 package com.example.quiz.dto;
 
 public class SubjectListDTO {
+	
 	private Long subjectId;
 	private String subjectTitle;
 	private boolean canPass;

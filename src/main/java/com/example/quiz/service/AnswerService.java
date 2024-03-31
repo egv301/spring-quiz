@@ -2,11 +2,8 @@ package com.example.quiz.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.quiz.dto.AnswerDTO;
 import com.example.quiz.dto.AnswersQuestionsDTO;
@@ -56,6 +53,7 @@ public class AnswerService {
 					answer.getTitle(),
 					answer.getCorrect()))
 			.collect(Collectors.toList());
+		
 		return new AnswersQuestionsDTO(
 			question.getId(),
 			question.getTitle(),
@@ -75,10 +73,6 @@ public class AnswerService {
 		));
 	}
 	
-//	public boolean checkAnswerQuestionSubject(Long answerId, Long questionId, Long subjectId) {
-//		return answerRepo.checkAnswerQuestionSubject(answerId, questionId, subjectId);
-//	}
-
 	public void updateAnswer(Long answer_id, AnswerDTO answerDTO) throws NotFoundException {
 		Answer answer = answerRepo.findById(answer_id).orElseThrow(()->new NotFoundException("Answer not found"));
 		answer.setTitle(answerDTO.getAnswerTitle());
@@ -107,6 +101,4 @@ public class AnswerService {
 	public List<Answer> getAnswersBySubject(Subject subject) {
 		return answerRepo.getAnswersBySubject(subject);
 	}
-	
-
 }

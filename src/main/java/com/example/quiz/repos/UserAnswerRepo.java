@@ -19,6 +19,4 @@ public interface UserAnswerRepo extends JpaRepository<UserAnswer, Long> {
 	List<Long> getUserAnswersIds(@Param("user") User user, @Param("subject") Subject subject);
 
 	Optional<UserAnswer> findByUserAndSubjectAndQuestion(User user, Subject subject, Question question);
-
-	
 }

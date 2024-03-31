@@ -30,7 +30,4 @@ public interface QuizResultRepository extends JpaRepository<QuizResult, Long> {
 
 	@Query(value = "SELECT e.subject.id FROM QuizResult e where e.user = :user")     
 	List<Long> getSubjectIDS(@Param("user") User user);
-	
-	
-	
 }

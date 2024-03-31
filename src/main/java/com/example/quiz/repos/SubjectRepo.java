@@ -6,7 +6,4 @@ import com.example.quiz.models.Subject;
 
 import java.util.List;
 
-public interface SubjectRepo extends JpaRepository<Subject, Long> {
-
-	
-}
+public interface SubjectRepo extends JpaRepository<Subject, Long> {}

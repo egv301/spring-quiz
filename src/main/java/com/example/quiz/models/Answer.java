@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Answer {
+	
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
@@ -70,7 +71,6 @@ public class Answer {
 		this.question = question;
 	}
 
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

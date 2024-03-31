@@ -12,6 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user_answers")
 public class UserAnswer {
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
@@ -93,8 +94,4 @@ public class UserAnswer {
 		return "UserAnswer [id=" + id + ", user=" + user.getUsername() + ", subject=" + subject.getTitle() + ", question=" + question.getTitle()
 				+ ", answer=" + answer.getTitle() + "]";
 	}
-	
-	
-
-    
 }
