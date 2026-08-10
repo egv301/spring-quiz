@@ -1,7 +1,10 @@
 package com.example.quiz.service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +15,7 @@ import com.example.quiz.models.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
@@ -27,11 +30,11 @@ public class JwtService {
         Date expiresAt = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .setSubject(user.getUsername())
+                .subject(user.getUsername())
                 .claim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
-                .setIssuedAt(now)
-                .setExpiration(expiresAt)
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .issuedAt(now)
+                .expiration(expiresAt)
+                .signWith(signingKey())
                 .compact();
     }
 
@@ -50,8 +53,13 @@ public class JwtService {
 
     private Claims getClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(signingKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    private SecretKey signingKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 }

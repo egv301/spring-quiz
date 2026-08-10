@@ -53,12 +53,18 @@ public class QuestionService {
 		);
 	}
 
-	public void addQuestion(Long subject_id, QuestionDTO questionDto) throws NotFoundException {
+	public QuestionDTO addQuestion(Long subject_id, QuestionDTO questionDto) throws NotFoundException {
 		Subject subject = subjectService.getSubject(subject_id);
-		questionRepo.save(new Question(
+		Question question = questionRepo.save(new Question(
 			questionDto.getTitle(), 
 			questionDto.getPoints(), 
 			subject));
+		return new QuestionDTO(
+			question.getId(),
+			question.getTitle(),
+			question.getPoints(),
+			question.getSubject().getId()
+		);
 	}
 	
 	public void updateQuestion(Long question_id, QuestionDTO questionDto) throws NotFoundException {

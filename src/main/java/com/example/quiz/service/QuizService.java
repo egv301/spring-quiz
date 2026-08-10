@@ -2,18 +2,13 @@ package com.example.quiz.service;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
 import com.example.quiz.dto.AnswerDTO;
 import com.example.quiz.dto.AnswerWithStatusDTO;
@@ -21,9 +16,8 @@ import com.example.quiz.dto.QuestionAnswersDTO;
 import com.example.quiz.dto.QuestionAnswersResultsDTO;
 import com.example.quiz.dto.QuizAnswerDTO;
 import com.example.quiz.dto.QuizDTO;
-import com.example.quiz.dto.QuizDetailedResulstDTO;
+import com.example.quiz.dto.QuizDetailedResultsDTO;
 import com.example.quiz.dto.QuizResultDTO;
-import com.example.quiz.dto.SubjectDTO;
 import com.example.quiz.dto.SubjectListDTO;
 import com.example.quiz.enums.AnswerStatus;
 import com.example.quiz.exceptions.NotFoundException;
@@ -34,10 +28,7 @@ import com.example.quiz.models.QuizResult;
 import com.example.quiz.models.Subject;
 import com.example.quiz.models.User;
 import com.example.quiz.models.UserAnswer;
-import com.example.quiz.repos.QuizResultRepository;
 import com.example.quiz.repos.SubjectRepo;
-
-import javassist.expr.NewArray;
 
 @Service
 public class QuizService {
@@ -98,15 +89,13 @@ public class QuizService {
 		}
 	}
 
-	public QuizDetailedResulstDTO showDetailedUserAnswers(Principal authUser,Long subjectId) throws NotFoundException {
+	public QuizDetailedResultsDTO showDetailedUserAnswers(Principal authUser,Long subjectId) throws NotFoundException {
 		Subject subject = subjectService.getSubject(subjectId);
 		User user = userService.findByUsername(authUser.getName());
 		
 		List<Answer> answerList = answerService.getAnswersBySubject(subject);
 		List<Long> userAnswerIdsList = userAnswerService.getUserAnswersIds(user, subject);
 		
-		List<QuestionAnswersResultsDTO> questionAnswersResultsListDTO = new ArrayList<>();
-		List<AnswerWithStatusDTO> answerWithStatusListDTO = new ArrayList<>();
 		Map<Long, QuestionAnswersResultsDTO> questionAnswersMap = new HashMap<Long, QuestionAnswersResultsDTO>();
 		
 		for(Answer answer : answerList) {
@@ -135,17 +124,13 @@ public class QuizService {
 				);
 			}
 		}
-		return new QuizDetailedResulstDTO(
+		return new QuizDetailedResultsDTO(
 				subject.getId(),
 				subject.getTitle(),
 				questionAnswersMap.values().stream().collect(Collectors.toList())
 		);
 		
 	}
-	
-	private SubjectDTO mapToSubjectDTO(Subject subject) {
-        return new SubjectDTO(subject.getId(), subject.getTitle());
-    }
     
     public QuizDTO getQuizDetails(Principal user,Long subjectId) throws NotFoundException, QuizAlreadyPassedException {
 		Subject subject = subjectService.getSubject(subjectId);
@@ -168,7 +153,7 @@ public class QuizService {
         return new AnswerDTO(answer.getId(), answer.getTitle(), answer.getCorrect());
     }
 
-	public void addQuizAsnwer(Principal auth,QuizAnswerDTO quizAnswerDto) throws NotFoundException {
+	public void addQuizAnswer(Principal auth,QuizAnswerDTO quizAnswerDto) throws NotFoundException {
 		User user = userService.findByUsername(auth.getName());
 		Subject subject = subjectService.getSubject(quizAnswerDto.getSubjectId());
 		Question question = questionService.getQuestion(quizAnswerDto.getQuestionId());
