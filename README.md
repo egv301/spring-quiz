@@ -15,7 +15,7 @@ Urers can:
 - Spring Data Jpa
 - Spring Validaion Api
 - Spring security
-- Thymeleaf
+- React
 
 
 

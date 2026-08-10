@@ -3,63 +3,58 @@ package com.example.quiz.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.quiz.service.UserService;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
     @Autowired
     UserService userService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-    	String[] resources = new String[]{
-                "/",
-                    "/home",
-                    "/css/**",
-                    "/icons/**",
-                    "/images/**",
-                    "/resources/**",
-                    "/static/**",
-                    "/js/**"
-            };
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf()
                     .disable()
-                    .authorizeRequests()
-                    .antMatchers(resources).permitAll()
-                    .antMatchers("/", "/quiz-list").permitAll()
-                    .antMatchers("/registration").not().fullyAuthenticated()
-                    .antMatchers("/admin/**").hasRole("ADMIN")
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                    .antMatchers("/api/auth/**", "/api/quizzes", "/hello").permitAll()
+                    .antMatchers("/api/admin/**", "/api/subjects/**", "/api/questions/**", "/api/answers/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 .and()
-                    .formLogin()
-                    .loginPage("/login")
-                    .permitAll()
-                .and()
-                    .logout()
-                    .permitAll();
+                .logout()
+                    .disable()
+                .authenticationProvider(daoAuthenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        return httpSecurity.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
-    
+
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
-    	DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-    	authenticationProvider.setPasswordEncoder(passwordEncoder());
-    	authenticationProvider.setUserDetailsService(userService);
-    	return authenticationProvider;
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        authenticationProvider.setUserDetailsService(userService);
+        return authenticationProvider;
     }
-    
 }
