@@ -1,6 +1,6 @@
 #FileLock
-#Tue Aug 11 01:02:52 KGT 2026
-server=192.168.1.2\:62788
-hostName=DESKTOP-QVR3072
+#Tue Aug 11 09:19:50 KGT 2026
+hostName=azat-it
+id=19feed56341e4f9186bd3a1253b920b0bf81f03b368
 method=file
-id=19fed0e67fea60e1bdbfdadeaa771e3d9af48a3aa3f
+server=127.0.1.1\:35945
