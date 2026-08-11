@@ -2,7 +2,6 @@ package com.example.quiz.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.quiz.dto.QuizResultDTO;
@@ -16,12 +15,16 @@ import com.example.quiz.repos.QuizResultRepository;
 
 @Service
 public class QuizResultService {
-	@Autowired
-	QuizResultRepository quizResultRepository;
-	@Autowired
-	SubjectService subjectService;
-	@Autowired
-	UserService userService;
+	private final QuizResultRepository quizResultRepository;
+	private final SubjectService subjectService;
+	private final UserService userService;
+
+	public QuizResultService(QuizResultRepository quizResultRepository, SubjectService subjectService,
+			UserService userService) {
+		this.quizResultRepository = quizResultRepository;
+		this.subjectService = subjectService;
+		this.userService = userService;
+	}
 	
 	public void saveResults(User user, Subject subject, int result) {
 		quizResultRepository.save(new QuizResult(user, subject, result));
@@ -29,8 +32,7 @@ public class QuizResultService {
 	
 	public List<UserQuizResultDTO> getStatsBySubject(Long subject_id) throws NotFoundException{
 		Subject subject = subjectService.getSubject(subject_id);
-		List<UserQuizResultDTO> quizResult = 
-				quizResultRepository
+		return quizResultRepository
 				.findBySubjectOrderByResultDesc(subject)
 				.stream()
 				.map(result->
@@ -39,8 +41,6 @@ public class QuizResultService {
 							result.getUser().getUsername(),
 							result.getResult()
 				)).collect(Collectors.toList());
-		
-		return quizResult;
 	}
 	
 	public List<IQuizCount> quizCount(){
@@ -49,7 +49,7 @@ public class QuizResultService {
 
 	public List<QuizResultDTO> getStatsByUser(Long user_id) {
 		User user = userService.findUserById(user_id);
-		List<QuizResultDTO> quizResult = quizResultRepository
+		return quizResultRepository
 				.findByUserOrderByResultDesc(user)
 				.stream()
 				.map(result->
@@ -58,8 +58,6 @@ public class QuizResultService {
 							result.getSubject().getTitle(),
 							result.getResult()
 					)).collect(Collectors.toList());
-		
-		return quizResult;
 	}
 
 	

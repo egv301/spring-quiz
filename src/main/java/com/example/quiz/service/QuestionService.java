@@ -3,7 +3,6 @@ package com.example.quiz.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.quiz.dto.QuestionDTO;
@@ -15,11 +14,13 @@ import com.example.quiz.repos.QuestionRepo;
 
 @Service
 public class QuestionService {
-	@Autowired
-    private QuestionRepo questionRepo;
+    private final QuestionRepo questionRepo;
+	private final SubjectService subjectService;
 
-	@Autowired
-	private SubjectService subjectService;
+	public QuestionService(QuestionRepo questionRepo, SubjectService subjectService) {
+		this.questionRepo = questionRepo;
+		this.subjectService = subjectService;
+	}
 
 	public Question getQuestion(Long question_id) throws NotFoundException{
 		return questionRepo.findById(question_id).orElseThrow(()->new NotFoundException("Question not found"));
@@ -68,7 +69,7 @@ public class QuestionService {
 	}
 	
 	public void updateQuestion(Long question_id, QuestionDTO questionDto) throws NotFoundException {
-		Question question = questionRepo.findById(questionDto.getId()).orElseThrow(()->new NotFoundException("Question not found"));
+		Question question = questionRepo.findById(question_id).orElseThrow(()->new NotFoundException("Question not found"));
 		question.setTitle(questionDto.getTitle());
 		question.setPoints(questionDto.getPoints());
 		questionRepo.save(question);

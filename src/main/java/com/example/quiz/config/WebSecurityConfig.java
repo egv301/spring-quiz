@@ -1,6 +1,5 @@
 package com.example.quiz.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,12 +17,16 @@ import com.example.quiz.service.UserService;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-    @Autowired
-    UserService userService;
-    @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
-    JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public WebSecurityConfig(UserService userService, PasswordEncoder passwordEncoder,
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

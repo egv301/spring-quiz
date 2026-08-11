@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.quiz.dto.AnswerDTO;
@@ -24,28 +23,28 @@ import com.example.quiz.exceptions.NotFoundException;
 import com.example.quiz.exceptions.QuizAlreadyPassedException;
 import com.example.quiz.models.Answer;
 import com.example.quiz.models.Question;
-import com.example.quiz.models.QuizResult;
 import com.example.quiz.models.Subject;
 import com.example.quiz.models.User;
 import com.example.quiz.models.UserAnswer;
-import com.example.quiz.repos.SubjectRepo;
 
 @Service
 public class QuizService {
-	@Autowired
-	SubjectRepo subjectRepo;
-	@Autowired
-    QuizResultService quizResultService;
-	@Autowired
-    UserService userService;
-	@Autowired
-	SubjectService subjectService;
-	@Autowired
-	AnswerService answerService;
-	@Autowired
-	QuestionService questionService;
-	@Autowired
-	UserAnswerService userAnswerService;
+    private final QuizResultService quizResultService;
+    private final UserService userService;
+    private final SubjectService subjectService;
+    private final AnswerService answerService;
+    private final QuestionService questionService;
+    private final UserAnswerService userAnswerService;
+
+    public QuizService(QuizResultService quizResultService, UserService userService, SubjectService subjectService,
+            AnswerService answerService, QuestionService questionService, UserAnswerService userAnswerService) {
+        this.quizResultService = quizResultService;
+        this.userService = userService;
+        this.subjectService = subjectService;
+        this.answerService = answerService;
+        this.questionService = questionService;
+        this.userAnswerService = userAnswerService;
+    }
 	
 	public QuizResultDTO processResults(Principal authUser,Long subjectId) throws NotFoundException {
 		int score = 0;
@@ -65,16 +64,15 @@ public class QuizService {
 	}
 	
 	public List<SubjectListDTO> getSubjectList(Principal auth){
-		User user = null;
 		List<Long> subjectIds = new ArrayList<>();
 		List<SubjectListDTO> subjectListDto = new ArrayList<>();
 		List<Subject> subjectList = subjectService.subjectList();
 		if(auth!=null) {
-			user = userService.findByUsername(auth.getName());
+			User user = userService.findByUsername(auth.getName());
 			subjectIds = quizResultService.getSubjectIDS(user);
 		}
 		for(Subject subject : subjectList) {
-			boolean canPass = subjectIds.contains(subject.getId()) ? false : true;
+			boolean canPass = !subjectIds.contains(subject.getId());
 			subjectListDto.add(new SubjectListDTO(subject.getId(), subject.getTitle(), canPass));
 		}
 		return subjectListDto;
@@ -96,7 +94,7 @@ public class QuizService {
 		List<Answer> answerList = answerService.getAnswersBySubject(subject);
 		List<Long> userAnswerIdsList = userAnswerService.getUserAnswersIds(user, subject);
 		
-		Map<Long, QuestionAnswersResultsDTO> questionAnswersMap = new HashMap<Long, QuestionAnswersResultsDTO>();
+		Map<Long, QuestionAnswersResultsDTO> questionAnswersMap = new HashMap<>();
 		
 		for(Answer answer : answerList) {
 			AnswerWithStatusDTO answerWithStatusDTO = new AnswerWithStatusDTO();
@@ -127,7 +125,7 @@ public class QuizService {
 		return new QuizDetailedResultsDTO(
 				subject.getId(),
 				subject.getTitle(),
-				questionAnswersMap.values().stream().collect(Collectors.toList())
+				new ArrayList<>(questionAnswersMap.values())
 		);
 		
 	}

@@ -41,7 +41,7 @@ public class SubjectController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@Valid @RequestBody SubjectDTO subject) throws NotFoundException {
+    public void create(@Valid @RequestBody SubjectDTO subject) {
         subjectService.saveSubject(subject);
     }
 

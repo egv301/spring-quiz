@@ -1,10 +1,11 @@
 package com.example.quiz.service;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,12 +23,15 @@ import com.example.quiz.repos.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService {
-   @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    PasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder bCryptPasswordEncoder;
+
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder bCryptPasswordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Override
     @Transactional
@@ -55,10 +59,6 @@ public class UserService implements UserDetailsService {
         return userFromDb.orElse(new User());
     }
 
-    public List<User> allUsers() {
-        return userRepository.findAll();
-    }
-
     public boolean saveUser(RegistrationDTO userDto) {
         User userFromDB = userRepository.findByUsername(userDto.getUsername());
        
@@ -74,18 +74,10 @@ public class UserService implements UserDetailsService {
         
         User user = new User();
         user.setUsername(userDto.getUsername());
-        user.setRoles(Arrays.asList(role));
+        user.setRoles(Collections.singletonList(role));
         user.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         userRepository.save(user);
         return true;
-    }
-
-    public boolean deleteUser(Long userId) {
-        if (userRepository.findById(userId).isPresent()) {
-            userRepository.deleteById(userId);
-            return true;
-        }
-        return false;
     }
 
     public boolean isAdmin(Principal principal){

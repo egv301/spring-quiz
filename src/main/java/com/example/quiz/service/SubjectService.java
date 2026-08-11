@@ -3,33 +3,25 @@ package com.example.quiz.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.quiz.dto.QuestionDTO;
 import com.example.quiz.dto.SubjectDTO;
 import com.example.quiz.dto.SubjectWithQuestionsDTO;
 import com.example.quiz.exceptions.NotFoundException;
-import com.example.quiz.models.Question;
 import com.example.quiz.models.Subject;
 import com.example.quiz.repos.SubjectRepo;
 
 @Service
 public class SubjectService {
-	@Autowired
-    private SubjectRepo subjectRepo;
+    private final SubjectRepo subjectRepo;
+
+	public SubjectService(SubjectRepo subjectRepo) {
+		this.subjectRepo = subjectRepo;
+	}
 	
 	public Subject getSubject(Long subject_id) throws NotFoundException{
 		return subjectRepo.findById(subject_id).orElseThrow(()->new NotFoundException("Subject not found"));
-	}
-
-	public SubjectDTO getSubjectDTO(Long question_id) throws NotFoundException{
-		Subject subject = getSubject(question_id);
-		return new SubjectDTO(
-			subject.getId(),
-			subject.getTitle(),
-			subject.getIsActive()
-		);
 	}
 
 	public List<Subject> subjectList(){
@@ -41,7 +33,7 @@ public class SubjectService {
 		).collect(Collectors.toList());
 	}
 	
-	public void saveSubject(SubjectDTO subjectDto) throws NotFoundException {
+	public void saveSubject(SubjectDTO subjectDto) {
 		subjectRepo.save(new Subject(
 			subjectDto.getTitle(),
 			subjectDto.getIsActive()
